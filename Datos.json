@@ -1,0 +1,224 @@
+{
+  "nodes": [
+    {
+      "key": -11,
+      "data": {
+        "group": "semestre1",
+        "text": "primero",
+        "color": 1,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -11,
+        "loc": "318 63.52284749830794",
+        "__gohashid": 1193
+      }
+    },
+    {
+      "key": -12,
+      "data": {
+        "group": "semestre2",
+        "text": "Tercero",
+        "color": 3,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OBC",
+        "key": -12,
+        "loc": "560 63.52284749830794",
+        "__gohashid": 1194
+      }
+    },
+    {
+      "key": -15,
+      "data": {
+        "group": "semestre2",
+        "text": "quinto",
+        "color": 1,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -15,
+        "loc": "560 168.52284749830795",
+        "__gohashid": 1197
+      }
+    },
+    {
+      "key": -16,
+      "data": {
+        "group": "semestre3",
+        "text": "Setimo",
+        "color": 4,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OBC",
+        "key": -16,
+        "loc": "802 168.52284749830795",
+        "__gohashid": 1198
+      }
+    },
+    {
+      "key": -13,
+      "data": {
+        "group": "semestre3",
+        "text": "Sexto",
+        "color": 0,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -13,
+        "loc": "802 63.52284749830794",
+        "__gohashid": 1195
+      }
+    },
+    {
+      "key": -14,
+      "data": {
+        "group": "semestre1",
+        "text": "Segundo",
+        "color": 2,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -14,
+        "loc": "318 168.52284749830795",
+        "__gohashid": 1196
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": -11,
+      "fromData": {
+        "group": "semestre1",
+        "text": "primero",
+        "color": 1,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -11,
+        "loc": "318 63.52284749830794",
+        "__gohashid": 1193
+      },
+      "to": -12,
+      "toData": {
+        "group": "semestre2",
+        "text": "Tercero",
+        "color": 3,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OBC",
+        "key": -12,
+        "loc": "560 63.52284749830794",
+        "__gohashid": 1194
+      }
+    },
+    {
+      "from": -11,
+      "fromData": {
+        "group": "semestre1",
+        "text": "primero",
+        "color": 1,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -11,
+        "loc": "318 63.52284749830794",
+        "__gohashid": 1193
+      },
+      "to": -15,
+      "toData": {
+        "group": "semestre2",
+        "text": "quinto",
+        "color": 1,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -15,
+        "loc": "560 168.52284749830795",
+        "__gohashid": 1197
+      }
+    },
+    {
+      "from": -11,
+      "fromData": {
+        "group": "semestre1",
+        "text": "primero",
+        "color": 1,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -11,
+        "loc": "318 63.52284749830794",
+        "__gohashid": 1193
+      },
+      "to": -16,
+      "toData": {
+        "group": "semestre3",
+        "text": "Setimo",
+        "color": 4,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OBC",
+        "key": -16,
+        "loc": "802 168.52284749830795",
+        "__gohashid": 1198
+      }
+    },
+    {
+      "from": -14,
+      "fromData": {
+        "group": "semestre1",
+        "text": "Segundo",
+        "color": 2,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -14,
+        "loc": "318 168.52284749830795",
+        "__gohashid": 1196
+      },
+      "to": -13,
+      "toData": {
+        "group": "semestre3",
+        "text": "Sexto",
+        "color": 0,
+        "HP": 1,
+        "HT": 1,
+        "tipo": "OB",
+        "key": -13,
+        "loc": "802 63.52284749830794",
+        "__gohashid": 1195
+      }
+    }
+  ],
+  "tableData": {
+    "Cant. de materias": {
+      "CI": 1,
+      "CB": 2,
+      "AI": 1,
+      "CO": 1,
+      "enf": 1
+    },
+    "Cant. Horas Practicas": {
+      "CI": 1,
+      "CB": 2,
+      "AI": 1,
+      "CO": 1,
+      "enf": 1
+    },
+    "Cant. Horas Teoricas": {
+      "CI": 1,
+      "CB": 2,
+      "AI": 1,
+      "CO": 1,
+      "enf": 1
+    },
+    "Total Horas": {
+      "CI": 2,
+      "CB": 4,
+      "AI": 2,
+      "CO": 2,
+      "enf": 2
+    }
+  }
+}

@@ -1,0 +1,57 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 29/03/2018, 12:41:46 PM
+    Author     : pepe
+*/
+html,body {
+    height: 100%;
+}
+#malla{
+    background-color: #DAE4E4;
+}
+#paleta{
+    background-color: #EAE4E4;
+}
+  /* Estilos para la tabla "area" */
+  #area {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  #area th,
+  #area td {
+    padding: 8px;
+    border: 1px solid #ccc;
+  }
+
+  #area th {
+    background-color: #f2f2f2;
+  }
+
+  /* Estilos para la segunda tabla */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  table th,
+  table td {
+    padding: 8px;
+    border: 1px solid #ccc;
+  }
+
+  table th {
+    background-color: #f2f2f2;
+  }
+
+  /* Estilos adicionales para resaltar la fila al pasar el mouse */
+  table tbody tr:hover {
+    background-color: #e6e6e6;
+  }
+ 

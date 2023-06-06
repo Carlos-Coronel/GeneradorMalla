@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Malla</title>
+  <script src="assets/js/go-debug.js"></script>
+  <script src="assets/js/DataInspector.js"></script>
+  <script src="assets/js/main.js"></script>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/DataInspector.css">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+  <!-- jQuery library -->
+  <script src="assets/js/jquery.min.js"></script>
+
+  <!-- Latest compiled JavaScript -->
+  <script src="assets/js/bootstrap.min.js"></script>
+</head>
+
+<body onload='init()'>
+    <div class="row">
+      <div class="col-md-12">
+        <div id="sample" style="width: auto; height: 75vh;">
+          <div id="myDiagramDiv" style="width: 100%; display: flex; justify-content: space-between; height: 100%;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="d-flex justify-content-center">
+    <div class="col-md-10 text-center">
+      <table id="area" class="table">
+        <thead>
+          <tr>
+            <th>Areas de conocimiento</th>
+            <th>CI</th>
+            <th>CB</th>
+            <th>AI</th>
+            <th>CO</th>
+            <th>enf</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cant. de materias</td>
+            <td id="ci"></td>
+            <td id="cb"></td>
+            <td id="ai"></td>
+            <td id="co"></td>
+            <td id="enf"></td>
+          </tr>
+          <tr>
+            <td>Cant. Horas Practicas</td>
+            <td id="hpci"></td>
+            <td id="hpcb"></td>
+            <td id="hpai"></td>
+            <td id="hpco"></td>
+            <td id="hpenf"></td>
+          </tr>
+          <tr>
+            <td>Cant. Horas Teoricas</td>
+            <td id="htci"></td>
+            <td id="htcb"></td>
+            <td id="htai"></td>
+            <td id="htco"></td>
+            <td id="htenf"></td>
+          </tr>
+          <tr>
+            <td>Total Horas</td>
+            <td id="hci"></td>
+            <td id="hcb"></td>
+            <td id="hai"></td>
+            <td id="hco"></td>
+            <td id="henf"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="table-responsive">
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Semestre:</th>
+              <th>Primer</th>
+              <th>Segundo</th>
+              <th>Tercer</th>
+              <th>Cuarto</th>
+              <th>Quinto</th>
+              <th>Sexto</th>
+              <th>Séptimo</th>
+              <th>Octavo</th>
+              <th>Noveno</th>
+              <th>Décimo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cant. de materias</td>
+              <td id="semestre1"></td>
+              <td id="semestre2"></td>
+              <td id="semestre3"></td>
+              <td id="semestre4"></td>
+              <td id="semestre5"></td>
+              <td id="semestre6"></td>
+              <td id="semestre7"></td>
+              <td id="semestre8"></td>
+              <td id="semestre9"></td>
+              <td id="semestre10"></td>
+            </tr>
+            <tr>
+              <td>Horas Practicas</td>
+              <td id="hp1"></td>
+              <td id="hp2"></td>
+              <td id="hp3"></td>
+              <td id="hp4"></td>
+              <td id="hp5"></td>
+              <td id="hp6"></td>
+              <td id="hp7"></td>
+              <td id="hp8"></td>
+              <td id="hp9"></td>
+              <td id="hp10"></td>
+            </tr>
+            <tr>
+              <td>Horas Teoricas</td>
+              <td id="ht1"></td>
+              <td id="ht2"></td>
+              <td id="ht3"></td>
+              <td id="ht4"></td>
+              <td id="ht5"></td>
+              <td id="ht6"></td>
+              <td id="ht7"></td>
+              <td id="ht8"></td>
+              <td id="ht9"></td>
+              <td id="ht10"></td>
+            </tr>
+            <tr>
+              <td>Horas Semanales</td>
+              <td id="hs1"></td>
+              <td id="hs2"></td>
+              <td id="hs3"></td>
+              <td id="hs4"></td>
+              <td id="hs5"></td>
+              <td id="hs6"></td>
+              <td id="hs7"></td>
+              <td id="hs8"></td>
+              <td id="hs9"></td>
+              <td id="hs10"></td>
+            </tr>
+            <tr>
+              <td>Total Cant. de Horas Semanales</td>
+              <td id="hts1"></td>
+              <td id="hts2"></td>
+              <td id="hts3"></td>
+              <td id="hts4"></td>
+              <td id="hts5"></td>
+              <td id="hts6"></td>
+              <td id="hts7"></td>
+              <td id="hts8"></td>
+              <td id="hts9"></td>
+              <td id="hts10"></td>
+            </tr>
+          </tbody>
+          <thead>
+            <tr>
+              <th>Año:</th>
+              <th colspan="2">Primer</th>
+              <th colspan="2">Segundo</th>
+              <th colspan="2">Tercer</th>
+              <th colspan="2">Cuarto</th>
+              <th colspan="2">Quinto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cant. de materias</td>
+              <td colspan="2" id="a1"></td>
+              <td colspan="2" id="a2"></td>
+              <td colspan="2" id="a3"></td>
+              <td colspan="2" id="a4"></td>
+              <td colspan="2" id="a5"></td>
+            </tr>
+            <tr>
+              <td>Total de Horas Practicas</td>
+              <td colspan="2" id="ahp1"></td>
+              <td colspan="2" id="ahp2"></td>
+              <td colspan="2" id="ahp3"></td>
+              <td colspan="2" id="ahp4"></td>
+              <td colspan="2" id="ahp5"></td>
+            </tr>
+            <tr>
+              <td>Total de Horas Teoricas</td>
+              <td colspan="2" id="aht1"></td>
+              <td colspan="2" id="aht2"></td>
+              <td colspan="2" id="aht3"></td>
+              <td colspan="2" id="aht4"></td>
+              <td colspan="2" id="aht5"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="container mt-4">
+        <div class="row">
+          <div class="col-md-6 mb-2">
+            <button id="saveButton" class="btn btn-primary btn-block" onclick="save()">Guardar Modelo</button>
+          </div>
+          <div class="col-md-6 mb-2">
+            <button id="blobButton" class="btn btn-primary btn-block">Descargar
+              imagen</button>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <div class="col-md-12">
+              <label for="fileInput" class="custom-file-label" id="fileInputLabel">Seleccionar archivo</label>
+            </div>
+            <div class="col-md-12">
+              <input type="file" id="fileInput" class="custom-file-input" onchange="handleFileSelect(event)">              
+            </div>
+          </div>
+          <div class="col-md-6">
+            <button id="loadButton" class="btn btn-primary btn-block" onclick="load()" disabled>Cargar</button>
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <button  class="btn btn-success btn-block" onclick="exportConnectedDiagramData()">Guardar Datos</button>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
