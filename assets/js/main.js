@@ -748,7 +748,9 @@ function init() {
 
   myDiagram.add(
     $(go.Part, "Table", {
-      selectable: true,
+      selectable: false,
+      alignment: go.Spot.Center
+
     },
       $(go.TextBlock, "Areas", {
         row: 0,
@@ -834,52 +836,52 @@ function init() {
       // },
       {
         key: "semestre1",
-        text: "1",
+        text: "Primer semestre",
         isGroup: true,
       },
       {
         key: "semestre2",
-        text: "2",
+        text: "Segundo semestre",
         isGroup: true,
       },
       {
         key: "semestre3",
-        text: "3",
+        text: "Tercero semestre",
         isGroup: true,
       },
       {
         key: "semestre4",
-        text: "4",
+        text: "Cuarto semestre",
         isGroup: true,
       },
       {
         key: "semestre5",
-        text: "5",
+        text: "Quinto semestre",
         isGroup: true,
       },
       {
         key: "semestre6",
-        text: "6",
+        text: "Sexto semestre",
         isGroup: true,
       },
       {
         key: "semestre7",
-        text: "7",
+        text: "Septimo semestre",
         isGroup: true,
       },
       {
         key: "semestre8",
-        text: "8",
+        text: "Octavo semestre",
         isGroup: true,
       },
       {
         key: "semestre9",
-        text: "9",
+        text: "Noveno semestre",
         isGroup: true,
       },
       {
         key: "semestre10",
-        text: "10",
+        text: "Decimo semestre",
         isGroup: true,
       },
     ],
@@ -894,11 +896,9 @@ function init() {
   document.getElementById("blobButton").addEventListener("click", makeBlob);
 } // end init
 
-// When the blob is complete, make an anchor tag for it and use the tag to initiate a download
-// Works in:
-// * Chrome
-// * IE11, Edge
-// * Firefox
+
+
+/*------------------------Guardar Imagen---------------------------------*/
 function myCallback(blob) {
   var url = window.URL.createObjectURL(blob);
   var filename = "myBlobFile.png";
@@ -908,7 +908,6 @@ function myCallback(blob) {
   a.href = url;
   a.download = filename;
 
-  // IE 11
   if (window.navigator.msSaveBlob !== undefined) {
     window.navigator.msSaveBlob(blob, filename);
     return;
@@ -930,60 +929,12 @@ function makeBlob() {
     callback: myCallback
   });
 }
-
-// Show the diagram's model in JSON format
-/*function save() {
-  document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-  myDiagram.isModified = false;
-}
-
-function load() {
-  myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
-  myDiagram.delayInitialization(relayoutDiagram);
-}*/
-
-function handleFileSelect(event) {
-  const inputFile = event.target;
-  const fileName = inputFile.files[0].name;
-  const fileInputLabel = document.getElementById("fileInputLabel");
-  const loadButton = document.getElementById("loadButton");
-
-  if (fileInput.files && fileInput.files[0]) {
-    fileInputLabel.textContent = fileName;
-    loadButton.disabled = false; // Habilitar el botón de carga
-  } else {
-    fileInputLabel.textContent = "Seleccionar archivo";
-    loadButton.disabled = true; // Deshabilitar el botón de carga
-  }
-}
+/*---------------------------------------------------------------------*/
 
 
 
-function load() {
-  var fileInput = document.getElementById("fileInput");
-  var file = fileInput.files[0];
 
-  if (file) {
-    var reader = new FileReader();
-    reader.onload = function (event) {
-      var savedModel = event.target.result;
-
-      if (savedModel) {
-        myDiagram.model = go.Model.fromJson(savedModel);
-        alert("El modelo se ha cargado correctamente.");
-
-        // Actualizar el diseño y redibujar el diagrama
-        myDiagram.layoutDiagram(true);
-      } else {
-        alert("No se encontró ningún modelo válido en el archivo.");
-      }
-    };
-
-    reader.readAsText(file);
-  } else {
-    alert("No se ha seleccionado ningún archivo.");
-  }
-}
+/*-------------------------Guardar Modelo------------------------------*/
 
 function save() {
   var modelJson = myDiagram.model.toJson();
@@ -998,6 +949,10 @@ function save() {
 
   myDiagram.isModified = false;
 }
+/*---------------------------------------------------------------------*/
+
+
+/*-------------------------Guardar Datos------------------------------*/
 
 
 function exportConnectedDiagramData() {
@@ -1105,3 +1060,56 @@ function exportConnectedDiagramData() {
   // Liberar el objeto URL.createObjectURL para evitar fugas de memoria
   URL.revokeObjectURL(link.href);
 }
+
+/*---------------------------------------------------------------------*/
+
+
+/*-----------------------Selecionar Modelo-----------------------------*/
+
+function handleFileSelect(event) {
+  const inputFile = event.target;
+  const fileName = inputFile.files[0].name;
+  const fileInputLabel = document.getElementById("fileInputLabel");
+  const loadButton = document.getElementById("loadButton");
+
+  if (fileInput.files && fileInput.files[0]) {
+    fileInputLabel.textContent = fileName;
+    loadButton.disabled = false; // Habilitar el botón de carga
+  } else {
+    fileInputLabel.textContent = "Seleccionar archivo";
+    loadButton.disabled = true; // Deshabilitar el botón de carga
+  }
+}
+/*---------------------------------------------------------------------*/
+
+/*-----------------------Cargar Modelo-----------------------------*/
+
+function load() {
+  var fileInput = document.getElementById("fileInput");
+  var file = fileInput.files[0];
+
+  if (file) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      var savedModel = event.target.result;
+
+      if (savedModel) {
+        myDiagram.model = go.Model.fromJson(savedModel);
+        alert("El modelo se ha cargado correctamente.");
+
+        // Actualizar el diseño y redibujar el diagrama
+        myDiagram.layoutDiagram(true);
+      } else {
+        alert("No se encontró ningún modelo válido en el archivo.");
+      }
+    };
+
+    reader.readAsText(file);
+  } else {
+    alert("No se ha seleccionado ningún archivo.");
+  }
+}
+/*---------------------------------------------------------------------*/
+
+
+
