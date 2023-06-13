@@ -1,26 +1,39 @@
 <?php
 include 'Conexion.php';
 
-function mostrarDatosDesdeBD() {
+function obtenerDatosDesdeBD() {
     $link = conectar();
 
-    $statement = $link->prepare("SELECT nombre, imagen, modelos, datos FROM malla");
+    $statement = $link->prepare("SELECT idmalla, nombre, imagen, modelos FROM malla");
     $statement->execute();
 
+    $datos = array(); // Array para almacenar los datos
+
     while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+        $idmalla = $row['idmalla'];
         $nombre = $row['nombre'];
         $imagen = $row['imagen'];
         $modelos = $row['modelos'];
-        $datos = json_decode($row['datos'], true);
 
-        echo "Nombre: " . $nombre . "<br>";
-        echo "Imagen: <br>";
-        echo '<img src="data:image/jpeg;base64,' . base64_encode($imagen) . '"><br>'; // Mostrar la imagen en formato base64
-        echo "Modelos: <br>";
-        echo '<pre>' . print_r($modelos, true) . '</pre><br>'; // Mostrar los modelos en formato base64
-        echo "Datos: " .  base64_encode($datos) . "<br><br>";
+        // Construir un array asociativo con los datos
+        $datos[] = array(
+            'idmalla' => $idmalla,
+            'nombre' => $nombre,
+            'imagen' => base64_encode($imagen),
+            'modelos' => base64_encode($modelos)
+        );
     }
+
+    return $datos;
 }
 
-mostrarDatosDesdeBD();
+// Obtener los datos desde la base de datos
+$datosDesdeBD = obtenerDatosDesdeBD();
+
+// Convertir los datos a formato JSON
+$json = json_encode($datosDesdeBD);
+
+// Enviar el JSON como respuesta
+header('Content-Type: application/json');
+echo $json;
 ?>

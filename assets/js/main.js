@@ -160,7 +160,7 @@ function init() {
       "animationManager.isEnabled": false,
       "undoManager.isEnabled": true,
     });
-  // when the document is modified, add a "*" to the title and enable the "Save" button
+  //Habilitar boton de guardado
   myDiagram.addDiagramListener("Modified", function (e) {
     var button = document.getElementById("SaveButton");
     if (button) button.disabled = !myDiagram.isModified;
@@ -694,10 +694,16 @@ function init() {
       $(go.Panel, "Horizontal", {
         name: "HEADER",
         angle: 0, // maybe rotate the header to read sideways going up
-        alignment: go.Spot.Left
+        alignment: go.Spot.Center
       },
         $("SubGraphExpanderButton", {
-          margin: 5
+          margin: 15,
+          "_subGraphExpandedFigure": "TriangleUp",
+          "_subGraphCollapsedFigure": "TriangleDown",
+          "_buttonFillOver": "lightgreen",
+          "_buttonStrokeOver": "green",
+          //visible: false
+
         }), // this remains always visible
         $(go.Panel, "Horizontal", // this is hidden when the swimlane is collapsed
           new go.Binding("visible", "isSubGraphExpanded").ofObject(),
@@ -829,59 +835,45 @@ function init() {
 
   // define some sample graphs in some of the lanes
   myDiagram.model = new go.GraphLinksModel(
-    [ // node data
-      // {
-      //   key: -1,
-      //   category: "newbutton"
-      // },
+    [
       {
         key: "semestre1",
-        text: "Primer semestre",
         isGroup: true,
       },
       {
         key: "semestre2",
-        text: "Segundo semestre",
         isGroup: true,
       },
       {
         key: "semestre3",
-        text: "Tercero semestre",
         isGroup: true,
       },
       {
         key: "semestre4",
-        text: "Cuarto semestre",
         isGroup: true,
       },
       {
         key: "semestre5",
-        text: "Quinto semestre",
         isGroup: true,
       },
       {
         key: "semestre6",
-        text: "Sexto semestre",
         isGroup: true,
       },
       {
         key: "semestre7",
-        text: "Septimo semestre",
         isGroup: true,
       },
       {
         key: "semestre8",
-        text: "Octavo semestre",
         isGroup: true,
       },
       {
         key: "semestre9",
-        text: "Noveno semestre",
         isGroup: true,
       },
       {
         key: "semestre10",
-        text: "Decimo semestre",
         isGroup: true,
       },
     ],
@@ -889,227 +881,260 @@ function init() {
 
     ]);
 
-
-  // ------------------------------------------ INSPECTOR ------------------------------------------------
-
-
-  document.getElementById("blobButton").addEventListener("click", makeBlob);
 } // end init
 
 
 
-/*------------------------Guardar Imagen---------------------------------*/
-function myCallback(blob) {
-  var url = window.URL.createObjectURL(blob);
-  var filename = "myBlobFile.png";
+function showPrompt(op, id, nom) {
+  Swal.fire({
+    text: 'Escriba un nombre para el modelo',
+    input: 'text',
+    inputValue: nom || '',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+    showCancelButton: true,
+    imageUrl: "./assets/img/Info.png",
+    imageWidth: 400,
+    imageHeight: 200,
+    confirmButtonText: 'Aceptar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true,
+    focusConfirm: false,
+    preConfirm: (nombre) => {
+      if (!nombre) {
+        Swal.showValidationMessage('Por favor, ingresa un nombre');
+      }
+      return { nombre: nombre };
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const nombre = result.value.nombre;
+      if (op === "modificar") {
+        editModel(id, nombre)
+      } else {
+        saveAndInsert(nombre);
+      }
 
-  var a = document.createElement("a");
-  a.style = "display: none";
-  a.href = url;
-  a.download = filename;
-
-  if (window.navigator.msSaveBlob !== undefined) {
-    window.navigator.msSaveBlob(blob, filename);
-    return;
-  }
-
-  document.body.appendChild(a);
-  requestAnimationFrame(function () {
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+    }
   });
 }
 
-function makeBlob() {
-  var blob = myDiagram.makeImageData({
+
+function saveAndInsert(nombre) {
+  var modelJson = myDiagram.model.toJson();
+  var blobModel = new Blob([modelJson], { type: "application/json" });
+  var blobImage = null;
+  var blobCallback = function (blob) {
+    blobImage = blob;
+    var formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('imagen', blobImage);
+    formData.append('modelos', blobModel);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', './assets/php/Insertar.php', true);
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        Swal.fire({
+          title: 'Éxito',
+          text: 'Los datos se insertaron correctamente.',
+          timer: 5000,
+          timerProgressBar: true,
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Ocurrió un error al insertar los datos en la base de datos.',
+          timer: 5000,
+          timerProgressBar: true,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    };
+    xhr.send(formData);
+  };
+
+  myDiagram.makeImageData({
     background: "white",
     scale: 1,
     returnType: "blob",
-    callback: myCallback
+    callback: blobCallback
   });
 }
-/*---------------------------------------------------------------------*/
 
 
+function Listar() {
+  fetch('./assets/php/listar.php')
+    .then(response => response.json())
+    .then(data => {
 
+      htmlTable =
+        '<table class="table table-bordered" border=1><thead><tr><th>Nombre</th><th>Imagen</th><th>Modelo</th></tr></thead><tbody>' +
+        '<tr>' +
+        (data || []).map((per) =>
+          '<tr><td>' + per.nombre + '</td>' +
+          '<td><a href="data:image/jpeg;base64,' + per.imagen + '" download="' + per.nombre + '.jpg"><i class="fa-solid fa-file-image"></i></a></td>' +
+          '<td><a href="#" onclick="load(event, \'' + per.modelos + '\', \'' + per.nombre + '\', \'' + per.idmalla + '\')"><i class="fa-solid fa-file-code"></i></a></td>' +
+          '<td><a href="#" onclick="eliminarMalla(event,\'' + per.idmalla + '\')"><i class="fa-solid fa-trash"></i></a></td></tr>'
+        ).join('') +
+        '</tr></tbody></table>';
 
-/*-------------------------Guardar Modelo------------------------------*/
-
-function save() {
-  var modelJson = myDiagram.model.toJson();
-  var blob = new Blob([modelJson], { type: "application/json" });
-  var url = URL.createObjectURL(blob);
-
-  // Crear un enlace temporal y hacer clic en él para descargar el archivo
-  var link = document.createElement("a");
-  link.href = url;
-  link.download = "Modelo.json";
-  link.click();
-
-  myDiagram.isModified = false;
+      Swal.fire({
+        title: "Lista de modelos",
+        text: "Elige un modelo",
+        html: htmlTable,
+        imageUrl: "./assets/img/list2.png",
+        imageWidth: 400,
+        imageHeight: 200,
+      });
+    })
+    .catch(error => {
+      console.error('Error al obtener los datos:', error);
+    });
 }
-/*---------------------------------------------------------------------*/
 
+function eliminarMalla(event, idmalla) {
+  event.preventDefault(); // Evita el comportamiento predeterminado del enlace
 
-/*-------------------------Guardar Datos------------------------------*/
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: "No podrás revertir esta acción",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const formData = new FormData();
+      formData.append('idmalla', idmalla); // Agrega el valor de idmalla al FormData
 
-
-function exportConnectedDiagramData() {
-  // Crear un objeto para almacenar los nodos y relaciones
-  var diagramData = {
-    nodes: [],
-    links: [],
-    tableData: {}
-  };
-
-  // Recorrer los elementos de la tabla y agregarlos a tableData
-  var table = document.getElementById('area'); 
-  var rows = table.rows;
-
-  // Obtener los encabezados de las columnas
-  var headers = Array.from(rows[0].cells).map(function (cell) {
-    return cell.textContent.trim();
+      fetch('./assets/php/eliminar.php', {
+        method: 'POST',
+        body: formData, // Envia el FormData en el cuerpo de la solicitud
+      })
+        .then(response => response.text())
+        .then(result => {
+          Swal.fire({
+            title: 'Éxito',
+            text: 'Los datos se eliminaron correctamente.',
+            timer: 5000,
+            timerProgressBar: true,
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
+        })
+        .catch(error => {
+          console.error('Error al eliminar la malla:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'Ocurrió un error al eliminar los datos en la base de datos.',
+            timer: 5000,
+            timerProgressBar: true,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
+        });
+    }
   });
-
-  // Obtener los datos de las filas correspondientes
-  for (var i = 1; i < rows.length; i++) {
-    var dataRow = rows[i].cells;
-    var rowName = dataRow[0].textContent.trim();
-    //console.log(rowName);
+}
 
 
-    // Inicializar la entrada correspondiente en tableData si no existe
-    if (!diagramData.tableData.hasOwnProperty(rowName)) {
-      diagramData.tableData[rowName] = {};
-    }
+function load(event, modelos, nombre, idmalla) {
+  event.preventDefault();
+  var savedModel = atob(modelos);
 
-    for (var j = 1; j < headers.length; j++) {
-      var header = headers[j];
-      var value = parseInt(dataRow[j].textContent.trim(), 10);
-      diagramData.tableData[rowName][header] = value;
-    }
-  }
+  if (savedModel) {
+    myDiagram.model = go.Model.fromJson(savedModel);
+    Swal.fire({
+      title: 'Éxito',
+      text: 'El modelo se ha cargado correctamente.',
+      icon: 'success',
+      timer: 5000,
+      timerProgressBar: true,
+      confirmButtonText: 'Aceptar'
+    });
+    myDiagram.layoutDiagram(true);
+    // Cambiar el evento onclick y el texto del botón
+    var saveButton = document.getElementById('SaveButton');
+    saveButton.onclick = function () {
 
-  var visitedNodes = new Set(); // Conjunto para realizar un seguimiento de los nodos visitados
+      Swal.fire({
+        title: 'Opciones',
+        text: 'Selecciona una opción',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Modificar',
+        cancelButtonText: 'Guardar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          showPrompt("modificar", idmalla, nombre)
+        } else {
+          showPrompt("guardar")
+        }
+      });
 
-  // Función recursiva para recorrer los nodos y sus conexiones
-  function traverseNode(node) {
-    if (visitedNodes.has(node.key)) return; // Salir si el nodo ya ha sido visitado
-    visitedNodes.add(node.key); // Marcar el nodo como visitado
-
-    // Verificar si el nodo es un grupo (isGroup: true)
-    if (node.data.isGroup) {
-      return; // Salir si es un grupo
-    }
-
-    // Obtener la información completa del nodo
-    var nodeData = {
-      key: node.key,
-      data: node.data
     };
-
-    // Agregar el nodo al objeto diagramData
-    diagramData.nodes.push(nodeData);
-
-    var linkIt = node.findLinksOutOf();
-    while (linkIt.next()) {
-      var link = linkIt.value;
-
-      // Obtener la información completa de la relación
-      var linkData = {
-        from: link.fromNode.key,
-        fromData: link.fromNode.data,
-        to: link.toNode.key,
-        toData: link.toNode.data,
-      };
-
-      // Agregar la relación al objeto diagramData
-      diagramData.links.push(linkData);
-
-      // Recorrer el nodo de destino si aún no ha sido visitado
-      traverseNode(link.toNode);
-    }
-  }
-
-  // Recorrer todos los nodos del diagrama
-  var allNodesIt = myDiagram.nodes;
-  while (allNodesIt.next()) {
-    var node = allNodesIt.value;
-
-    // Comenzar el recorrido desde el nodo inicial
-    traverseNode(node);
-  }
-
-  // Convertir el objeto diagramData a formato JSON
-  var json = JSON.stringify(diagramData, null, 2);
-
-  // Crear un enlace temporal
-  var link = document.createElement('a');
-
-  // Crear un objeto Blob con el contenido JSON
-  var blob = new Blob([json], { type: 'application/json' });
-
-  // Configurar las propiedades del enlace
-  link.href = URL.createObjectURL(blob);
-  link.download = 'Datos.json';
-
-  // Simular un clic en el enlace para iniciar la descarga
-  link.click();
-
-  // Liberar el objeto URL.createObjectURL para evitar fugas de memoria
-  URL.revokeObjectURL(link.href);
-}
-
-/*---------------------------------------------------------------------*/
-
-
-/*-----------------------Selecionar Modelo-----------------------------*/
-
-function handleFileSelect(event) {
-  const inputFile = event.target;
-  const fileName = inputFile.files[0].name;
-  const fileInputLabel = document.getElementById("fileInputLabel");
-  const loadButton = document.getElementById("loadButton");
-
-  if (fileInput.files && fileInput.files[0]) {
-    fileInputLabel.textContent = fileName;
-    loadButton.disabled = false; // Habilitar el botón de carga
+    saveButton.textContent = 'Opciones';
   } else {
-    fileInputLabel.textContent = "Seleccionar archivo";
-    loadButton.disabled = true; // Deshabilitar el botón de carga
+    Swal.fire({
+      title: 'Error',
+      text: 'Ocurrió un error al cargar el modelo.',
+      icon: 'error',
+      timer: 5000,
+      timerProgressBar: true,
+      confirmButtonText: 'Aceptar'
+    });
   }
 }
-/*---------------------------------------------------------------------*/
 
-/*-----------------------Cargar Modelo-----------------------------*/
+function editModel(id, nombre) {
+  var modelJson = myDiagram.model.toJson();
+  var blobModel = new Blob([modelJson], { type: "application/json" });
+  var blobImage = null;
+  var blobCallback = function (blob) {
+    blobImage = blob;
+    var formData = new FormData();
+    formData.append('id', id);
+    formData.append('nombre', nombre);
+    formData.append('imagen', blobImage);
+    formData.append('modelos', blobModel);
 
-function load() {
-  var fileInput = document.getElementById("fileInput");
-  var file = fileInput.files[0];
-
-  if (file) {
-    var reader = new FileReader();
-    reader.onload = function (event) {
-      var savedModel = event.target.result;
-
-      if (savedModel) {
-        myDiagram.model = go.Model.fromJson(savedModel);
-        alert("El modelo se ha cargado correctamente.");
-
-        // Actualizar el diseño y redibujar el diagrama
-        myDiagram.layoutDiagram(true);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', './assets/php/Modificar.php', true);
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        Swal.fire({
+          title: 'Éxito',
+          text: 'Los datos se actualizaron correctamente.',
+          timer: 5000,
+          timerProgressBar: true,
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
       } else {
-        alert("No se encontró ningún modelo válido en el archivo.");
+        Swal.fire({
+          title: 'Error',
+          text: 'Ocurrió un error al actualizar los datos en la base de datos.',
+          timer: 5000,
+          timerProgressBar: true,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
       }
     };
+    xhr.send(formData);
+  };
 
-    reader.readAsText(file);
-  } else {
-    alert("No se ha seleccionado ningún archivo.");
-  }
+  myDiagram.makeImageData({
+    background: "white",
+    scale: 1,
+    returnType: "blob",
+    callback: blobCallback
+  });
 }
-/*---------------------------------------------------------------------*/
-
-
-
